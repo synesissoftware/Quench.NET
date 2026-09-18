@@ -38,3 +38,7 @@
 *.user
 *.zip
 project.lock.json
+
+
+# Local Framework-era tree kept during SDK modernisation
+_legacy/

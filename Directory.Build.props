@@ -10,8 +10,11 @@
     <Company>Synesis Information Systems</Company>
     <Product>Quench.NET</Product>
     <Authors>Matt Wilson</Authors>
-    <Copyright>Copyright © 2019-2026 Matthew Wilson and Synesis Information Systems</Copyright>
-    <VersionPrefix>0.0.1</VersionPrefix>
+    <Copyright>
+        Copyright © 2019-2026 Matthew Wilson and Synesis Information Systems
+        Copyright © 2013-2019 Matthew Wilson and Synesis Software
+    </Copyright>
+    <VersionPrefix>0.1.0</VersionPrefix>
 
     <RepositoryUrl>https://github.com/synesissoftware/Quench.NET</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

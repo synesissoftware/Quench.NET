@@ -32,11 +32,23 @@ Or `./build.sh` (Linux / macOS) / `./build.ps1` (Windows PowerShell).
 
 ```csharp
 using Quench;
+using Quench.Deems;
 
-Console.WriteLine($"Quench.NET {LibraryVersion.VersionString}");
+try
+{
+    // work
+}
+catch (Exception x)
+{
+    if (CaughtException.MustBeRethrown(x))
+    {
+        throw;
+    }
+}
 ```
 
-See [README.md](./README.md) for a Quick start, and [EXAMPLES.md](./EXAMPLES.md) for the sample program.
+See [README.md](./README.md) for a Quick start and configuration, and
+[EXAMPLES.md](./EXAMPLES.md) for the sample program.
 
 
 <!-- ########################### end of file ########################### -->

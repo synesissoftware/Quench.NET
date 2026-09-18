@@ -16,6 +16,7 @@ Customisable exception-quenching library, for .NET
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Quick start](#quick-start)
+- [Configuration](#configuration)
 - [Components](#components)
 - [Platform support](#platform-support)
 - [Repository layout](#repository-layout)
@@ -37,14 +38,18 @@ Customisable exception-quenching library, for .NET
 **Quench** provides customisable exception-quenching utilities.
 **Quench.NET** is the **.NET** implementation. This repository ships an
 SDK-style multi-target library (`net8.0`, `netstandard2.0`) with CI and
-NuGet packaging. The **0.0.1** surface is a packaging skeleton; the
-quenching API is not implemented yet.
+NuGet packaging.
 
-Framework-era **Quench.Core** (Hautacam / VS2010, **.NET Framework 4.0**)
-used directory labels **0.1** and **0.1.1**, while **AssemblyVersion** /
-**AssemblyFileVersion** were always **0.1.0.0**. This **0.0.1** package is
-not that release and does not claim behavioural parity with **0.1.1**.
-Recovered Core API is planned as **0.1.0** (see [TODO.md](./TODO.md)).
+**0.1.0** is the first SDK-style port of Framework **Quench.Core** behaviour
+from Hautacam tagged tree **0.1.1**. That tree’s directory label was
+**0.1.1** while **AssemblyVersion** / **AssemblyFileVersion** were
+**0.1.0.0**; this NuGet **VersionPrefix** is **0.1.0** by coincidence of
+that assembly label, not as a patch on a prior modern release. See
+[FAQ.md](./FAQ.md).
+
+With no configuration, Quench **rethrows** (`QuenchAction.Throw`). That
+safety default is preserved from the Framework **Arbitrator** static
+constructor.
 
 
 ## Installation
@@ -60,19 +65,70 @@ See [INSTALL.md](./INSTALL.md) for source checkout restore, build, and test.
 
 ```csharp
 using Quench;
+using Quench.Deems;
 
-Console.WriteLine($"Quench.NET {LibraryVersion.VersionString}");
+try
+{
+    // work
+}
+catch (Exception x)
+{
+    if (CaughtException.MustBeRethrown(x))
+    {
+        throw;
+    }
+}
 ```
 
 See [`samples/Quench.NET.QuickStart`](./samples/Quench.NET.QuickStart) for a
 runnable example. A short index is in [EXAMPLES.md](./EXAMPLES.md).
 
 
+## Configuration
+
+**0.1.0** does not auto-load Framework **App.config**. Configure in code,
+which is sufficient for all unit tests on `net8.0` / `netstandard2.0`:
+
+```csharp
+using System.IO;
+
+using Quench;
+
+Core.Configure(cfg =>
+{
+    cfg.DefaultAction = QuenchAction.Throw;
+    cfg.ForException<OutOfMemoryException>(QuenchAction.Quench);
+    cfg.ForException(typeof(IOException), QuenchAction.Throw)
+        .ExceptWhen(typeof(MyService), QuenchAction.Quench);
+});
+```
+
+Optional XML uses the 0.1.1 `<quench>` schema (program default action,
+`forException`, `exceptWhen`):
+
+```csharp
+Core.ConfigureFromXml(File.ReadAllText("quench.xml"));
+```
+
+`Core.ResetConfiguration()` restores default-rethrow with no rules.
+
+A JSON / Options adapter, an **App.config** section-handler for
+.NET Framework hosts, and the incomplete **Quench.Fluent** package are
+out of scope for **0.1.0** (see [TODO.md](./TODO.md)).
+
+
 ## Components
 
-Skeleton; quench API not yet implemented.
-
 * **`LibraryVersion`** — Major, Minor, Patch, and VersionString;
+* **`Core`** — `MustBeRethrown`, `MayBeQuenched`, `IsPreciselySpecified`,
+  `Configure`, `ConfigureFromXml`, `ResetConfiguration`,
+  `SetProcessGlobalLogger`;
+* **`Quench.Deems.CaughtException`** — fluent-reading façade over **Core**;
+* **`Quench.Extensions.ExceptionExtensions`** — `MustBeRethrown` /
+  `MayBeQuenched` on **Exception**;
+* **`QuenchAction`** — `Throw` (default) or `Quench`;
+* **`Quench.Diagnostics.ISimpleLogger`** — in-box logger (no Diagnosticism
+  or Microsoft.Extensions.Logging dependency);
 
 
 ## Platform support
@@ -160,6 +216,8 @@ None (currently).
 
 * [**Quench.Python**](https://github.com/synesissoftware/Quench.Python/);
 * [**Quench.Ruby**](https://github.com/synesissoftware/Quench.Ruby/);
+
+**.NET 0.1.0** is the reference API for seeding those language ports.
 
 
 ### License

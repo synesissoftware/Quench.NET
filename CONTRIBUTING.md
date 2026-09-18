@@ -150,7 +150,7 @@ workflow packs the library and publishes to
 [NuGet.org](https://www.nuget.org/) when `NUGET_API_KEY` is configured in
 repository secrets.
 
-Tag releases with semantic version tags (for example, `0.0.1` or `v0.0.1`).
+Tag releases with semantic version tags (for example, `0.1.0` or `v0.1.0`).
 
 
 ## License
