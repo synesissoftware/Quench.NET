@@ -1,0 +1,2 @@
+Quench.NET provides customisable exception-quenching for .NET
+Copyright (c) 2019-2026, Matthew Wilson and Synesis Information Systems
